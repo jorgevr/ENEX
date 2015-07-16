@@ -1,0 +1,1 @@
+C:\WORK\WISE_R3\SVN\trunk\Modules\DTEMeasuresLoader\DTEWinService\bin\Debug\DTEWinService.exe.config

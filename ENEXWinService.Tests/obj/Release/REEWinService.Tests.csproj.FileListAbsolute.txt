@@ -1,0 +1,1 @@
+C:\WORK\WISE_R3\SVN\trunk\Modules\REEMeasuresLoader\REEWinService.Tests\obj\Release\ResolveAssemblyReference.cache

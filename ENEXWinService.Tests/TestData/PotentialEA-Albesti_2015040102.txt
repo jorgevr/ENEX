@@ -1,0 +1,2 @@
+DateHour Wind_PI(m/s) Production_SubStat(kWh) Potential_EA(kWh) EnergyAvailability
+2015040102 7.9 10558.89 13894.815 0.76

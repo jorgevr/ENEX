@@ -1,0 +1,91 @@
+{
+    "$id": "1",
+    "Measure": {
+      "$id": "2",
+      "Signal": {
+        "$id": "3",
+        "Id": "1488",
+        "Device": {
+          "$id": "4",
+          "Id": "254",
+          "TypeDevice": {
+            "$id": "5",
+            "Id": "P",
+            "Name": "PHYSICAL",
+            "Description": "PHYSICAL",
+            "Active": true,
+            "UtcDateTimeInsert": "2014-11-28T10:00:00",
+            "User": "DVELASCO"
+          },
+          "Name": "MPC-333 - 254",
+          "Description": "UPC WEATHERSTATION",
+          "Active": true,
+          "Application": {
+            "$id": "6",
+            "Id": "WS",
+            "Name": "WS",
+            "Description": "WS",
+            "Active": true,
+            "UtcDateTimeInsert": "2015-06-12T11:02:58.9278197Z",
+            "User": "dVelasco"
+          },
+          "Manufacture": {
+            "$id": "7",
+            "Id": "DVP2",
+            "Name": "DVP2",
+            "Description": "DVP2",
+            "Active": true,
+            "UtcDateTimeInsert": "2015-06-12T11:02:58.9434147Z",
+            "User": "dVelasco"
+          },
+          "UtcDateTimeInsert": "2014-11-28T10:00:00",
+          "User": "DVELASCO"
+        },
+        "Source": {
+          "$id": "8",
+          "Id": "ADV",
+          "Name": "ADVANTIC",
+          "Description": "ADVANTIC",
+          "Active": true,
+          "UtcDateTimeInsert": "2014-11-28T10:00:00",
+          "User": "DVELASCO"
+        },
+        "DataVariable": {
+          "$id": "9",
+          "Id": "WS",
+          "Name": "WIND SPEED",
+          "Description": "WIND SPEED",
+          "Unit": "M/S",
+          "Active": true
+        },
+        "Resolution": {
+          "$id": "10",
+          "Id": "1M",
+          "Description": "MINUTE",
+          "OffsetInSeconds": 60,
+          "Active": true
+        },
+        "Name": "WIND SPEED (AVERAGE)",
+        "Description": "WIND SPEED (AVERAGE)",
+        "Active": true,
+        "Offset": 0,
+        "UtcDateTimeInsert": "2014-11-28T10:00:00",
+        "User": "DVELASCO"
+      },
+      "UtcDateTime": "2015-04-10T05:21:00",
+      "Value": 196,
+      "ReliabilityType": {
+        "$id": "11",
+        "Id": "0",
+        "Name": "VALID",
+        "Description": "VALID",
+        "Active": true,
+        "UtcDateTimeInsert": "2015-06-12T11:02:59.0838915Z",
+        "User": "DVELASCO"
+      },
+      "Percentage": 1,
+      "UtcDateTimeInsert": "2015-04-10T06:16:10",
+      "User": "ADVANTICSERVICE"
+    },
+    "UtcDateTimeInJS": "1428643260000"
+}

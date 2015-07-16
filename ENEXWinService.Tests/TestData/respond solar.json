@@ -1,0 +1,91 @@
+{
+    "$id": "419",
+    "Measure": {
+      "$id": "420",
+      "Signal": {
+        "$id": "421",
+        "Id": "845",
+        "Device": {
+          "$id": "422",
+          "Id": "254",
+          "TypeDevice": {
+            "$id": "423",
+            "Id": "P",
+            "Name": "PHYSICAL",
+            "Description": "PHYSICAL",
+            "Active": true,
+            "UtcDateTimeInsert": "2014-11-28T10:00:00",
+            "User": "DVELASCO"
+          },
+          "Name": "MPC-333 - 254",
+          "Description": "UPC WEATHERSTATION",
+          "Active": true,
+          "Application": {
+            "$id": "424",
+            "Id": "WS",
+            "Name": "WS",
+            "Description": "WS",
+            "Active": true,
+            "UtcDateTimeInsert": "2015-06-12T11:32:52.5842493Z",
+            "User": "dVelasco"
+          },
+          "Manufacture": {
+            "$id": "425",
+            "Id": "DVP2",
+            "Name": "DVP2",
+            "Description": "DVP2",
+            "Active": true,
+            "UtcDateTimeInsert": "2015-06-12T11:32:52.5842493Z",
+            "User": "dVelasco"
+          },
+          "UtcDateTimeInsert": "2014-11-28T10:00:00",
+          "User": "DVELASCO"
+        },
+        "Source": {
+          "$id": "426",
+          "Id": "ADV",
+          "Name": "ADVANTIC",
+          "Description": "ADVANTIC",
+          "Active": true,
+          "UtcDateTimeInsert": "2014-11-28T10:00:00",
+          "User": "DVELASCO"
+        },
+        "DataVariable": {
+          "$id": "427",
+          "Id": "SRAD",
+          "Name": "SOLAR RADIATION",
+          "Description": "SOLAR RADIATION",
+          "Unit": "W/M2",
+          "Active": true
+        },
+        "Resolution": {
+          "$id": "428",
+          "Id": "1M",
+          "Description": "MINUTE",
+          "OffsetInSeconds": 60,
+          "Active": true
+        },
+        "Name": "SOLAR RADIATION (3)",
+        "Description": "SOLAR RADIATION (3)",
+        "Active": true,
+        "Offset": 0,
+        "UtcDateTimeInsert": "2014-11-28T10:00:00",
+        "User": "DVELASCO"
+      },
+      "UtcDateTime": "2015-04-10T05:59:00",
+      "Value": 66.46,
+      "ReliabilityType": {
+        "$id": "429",
+        "Id": "0",
+        "Name": "VALID",
+        "Description": "VALID",
+        "Active": true,
+        "UtcDateTimeInsert": "2015-06-12T11:32:52.5842493Z",
+        "User": "DVELASCO"
+      },
+      "Percentage": 1,
+      "UtcDateTimeInsert": "2015-04-10T06:31:02",
+      "User": "ADVANTICSERVICE"
+    },
+    "UtcDateTimeInJS": "1428645540000"
+  }
