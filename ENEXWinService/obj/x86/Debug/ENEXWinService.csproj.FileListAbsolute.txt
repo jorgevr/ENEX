@@ -21,3 +21,4 @@ C:\Users\jorge.vazquez\Documents\gnarum\forecast\Modules\ENEXMeasuresLoader\ENEX
 C:\Users\jorge.vazquez\Documents\gnarum\forecast\Modules\ENEXMeasuresLoader\ENEXWinService\obj\x86\Debug\ENEXWinService.ProjectInstaller.resources
 C:\Users\jorge.vazquez\Documents\gnarum\forecast\Modules\ENEXMeasuresLoader\ENEXWinService\obj\x86\Debug\ENEXWinService.exe
 C:\Users\jorge.vazquez\Documents\gnarum\forecast\Modules\ENEXMeasuresLoader\ENEXWinService\obj\x86\Debug\ENEXWinService.pdb
+C:\Users\jorge.vazquez\Documents\gnarum\forecast\Modules\ENEXMeasuresLoader\ENEXWinService\obj\x86\Debug\ENEXWinService.csprojResolveAssemblyReference.cache
