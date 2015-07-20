@@ -190,8 +190,18 @@ namespace ENEXWinService.Tests.FileExtracterTests
                 data.Add(gettedData);
             }
 
+            int nRows = data.Count;
+            int nCols = data[0].Count;
+            
 
-            Console.Read();
+            foreach(List<string> b in data)
+            {
+                foreach(string c in b)    
+                {
+                    string cell = c;
+                }
+
+            }
 
          //   Assert.AreEqual(getYear, 2015);
 
