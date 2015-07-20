@@ -198,6 +198,7 @@ namespace ENEXWinService.Tests.FileExtracterTests
             {
                 foreach(string c in b)    
                 {
+                    if (c)
                     string cell = c;
                 }
 
