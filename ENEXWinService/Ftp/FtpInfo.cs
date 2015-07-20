@@ -2,6 +2,7 @@
 
 namespace ENEXWinService.Ftp
 {
+    /*
     public interface IFtpInfo
     {
         string Address { get; }
@@ -33,5 +34,5 @@ namespace ENEXWinService.Ftp
             _password = password;
         }
 
-    }
+    }*/
 }

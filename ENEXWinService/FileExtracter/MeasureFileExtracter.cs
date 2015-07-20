@@ -6,6 +6,7 @@ using ENEXWinService.Configuration;
 using ENEXWinService.Services;
 using System.Text.RegularExpressions;
 using log4net;
+using System.Collections.Generic;
 
 
 namespace ENEXWinService.FileExtracter
@@ -14,7 +15,7 @@ namespace ENEXWinService.FileExtracter
     {
         Measure ProcessLine(string line, string fileName, ApiPlant plant);
         String getPlantName(string filePath);
-
+        bool FindSheet(string SheetName);
     }
 
     public class MeasureFileExtracter : IMeasureFileExtracter
@@ -32,6 +33,48 @@ namespace ENEXWinService.FileExtracter
         {
             _confProvider = configProvider;
         }
+
+         
+        public bool FindSheet(string SheetName)
+        {
+            //lets find Current month
+            DateTime now = DateTime.Now;
+            string monthName = new DateTime(2010, 8, 1)
+                .ToString("MMM");
+            CultureInfo ru = new CultureInfo("ro-RO");
+            string currentMonth = now.ToString("MMM", ru);
+            currentMonth = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(currentMonth.Remove(currentMonth.Length - 1));
+
+            // also check that it is the current year
+            if (SheetName.Substring(1, 3) == currentMonth && FindCurrentYear( SheetName ) )
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }            
+
+        }
+
+        private bool FindCurrentYear(string sheetName)
+        {
+            DateTime now = DateTime.Now;
+
+            CultureInfo ru = new CultureInfo("ro-RO");
+            int currentYear = now.Year;
+            int sheetYear = Convert.ToInt32(sheetName.Substring(5,4));
+
+            if (sheetYear == currentYear)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+         
 
         public Measure ProcessLine(string line, string fileName, ApiPlant plant)
         {

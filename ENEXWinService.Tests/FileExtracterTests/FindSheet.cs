@@ -140,7 +140,7 @@ namespace ENEXWinService.Tests.FileExtracterTests
             // initialize
             OleDbConnection conn;
             //OleDbDataAdapter adapter;
-            DataTable dt = null;
+            //DataTable dt = null;
             DataSet ds = new DataSet();
             
             var file = @"TestData\Production NALBANT Jan-Jul16 2015.xls";
@@ -156,18 +156,42 @@ namespace ENEXWinService.Tests.FileExtracterTests
             // dt = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
 
             // End initialize
-            
-            string sheetName = "'Iul 2015'";
+
+            string sheetName = "'Iul 2015$'";
             cmd.CommandText = "SELECT * FROM [" + sheetName + "]";
 
-            OleDbDataAdapter da = new OleDbDataAdapter(cmd);
+            DataTable dt = new DataTable();
             dt.TableName = sheetName;
 
+            OleDbDataAdapter da = new OleDbDataAdapter(cmd);
             da.Fill(dt);
             ds.Tables.Add(dt);
 
+            List<List<string>> data = new List<List<string>>();
+            
+            foreach (DataRow row in dt.Rows)
+            {
+                //if (row == null) continue;
+                List<string> gettedData = new List<string>();
+                int i = 0;
+                foreach (var columnitem in row.ItemArray) // Loop over the items.
+                {
+                    //Console.Write("Item: "); // Print label.
+                    //Console.WriteLine(item); // Invokes ToString abstract method.
+                    if (i == 0 && columnitem.ToString() == "")
+                    {
+                    }
+                    else
+                    {
+                        gettedData.Add(columnitem.ToString()); //add data
+                    }
+                    i++;
+                }
+                data.Add(gettedData);
+            }
 
 
+            Console.Read();
 
          //   Assert.AreEqual(getYear, 2015);
 

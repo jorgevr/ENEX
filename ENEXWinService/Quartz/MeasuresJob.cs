@@ -9,6 +9,8 @@ using ENEXWinService.Services;
 using log4net;
 using Quartz;
 using System.IO;
+using System.Data.OleDb;
+using System.Data;
 
 namespace ENEXWinService.Quartz
 {
@@ -23,7 +25,7 @@ namespace ENEXWinService.Quartz
         private static IPlantService _plantService;
         private static IMeasureFileExtracter _fileExtracter;
         private static IPlantPowerFileExtracter _filePlantPowerExtracter;
-        private static IFtpClient _ftpClient;
+        //private static IFtpClient _ftpClient;
 
         public void Execute(IJobExecutionContext context)
         {
@@ -45,18 +47,24 @@ namespace ENEXWinService.Quartz
             prepareContextData(context);
             refreshConfigSettings();
             //var plant = getPlant();
-            // jvr we process all files with .txt termination
-            // var processFilesList=getProcessedMeasuresFilesList();
-            var filePaths = getNoProcessedFtpFiles();//processFilesList);
-
-
-            if (filePaths == null || !filePaths.Any())
+            // jvr we process all files with .xls termination
+            string directoryPathToWatch = _configProvider.GetDirectoryPathToWatch();
+            if (!Directory.Exists(directoryPathToWatch))
+            {
+                string error = string.Format("Directory '{0}' not found", directoryPathToWatch);
+                _logger.Fatal(error);
+                return;
+            }
+            _logger.Info(string.Format("Directory '{0}' found", directoryPathToWatch));
+            var files = Directory.GetFiles(directoryPathToWatch, _configProvider.GetFilenamePattern()).ToList();
+            if (!files.Any())
             {
                 _logger.Warn("There are no files to process.");
                 return;
             }
-            _logger.InfoFormat("Found {0} files to process", filePaths.Count);
-            processFiles(filePaths);//, plant);
+            _logger.Info(String.Format("Checking current files"));
+            processFiles(files);
+            _logger.Info(String.Format("Done checking current files"));
         }
 
         /* private ApiPlant getPlant()
@@ -64,30 +72,16 @@ namespace ENEXWinService.Quartz
              return _plantService.GetPlant(_configProvider.GetHourlyPlantsString());
          }*/
 
+        /*
         private IList<String> getNoProcessedFtpFiles()       // IList<string> processFilesList)
         {
             IList<String> noProcessedFilesList = new List<String>();
             var allFilePathsList = getAllFtpFiles();
 
-            //jvr this loop is not neccesary as all *.txt files are processed 
-            /*
-            foreach (String file in allFilePathsList) 
-            {
-                _logger.DebugFormat("Process File List have {0} files", processFilesList.Count);
-                if (!processFilesList.Any(x => x == new FileInfo(file).Name))
-                {
-                    noProcessedFilesList.Add(file);
-                    _logger.DebugFormat("New detected File: {0}", file);
-                }
-                else 
-                {
-                    _logger.DebugFormat("File is processed: {0}", file);
-                }
-            }*/
-            // return noProcessedFilesList;
+
             return allFilePathsList;
         }
-
+        */
         private IList<String> getProcessedMeasuresFilesList()
         {
             var processFileListPath = _configProvider.GetProcessMeasuresFilesListPath();
@@ -122,14 +116,14 @@ namespace ENEXWinService.Quartz
             File.Copy(tempfile, processFileListPath, true);
         }
 
-
-
-        private IList<String> getAllFtpFiles()
+        /*
+        private IList<String> getAllFiles()
         {
-            var remotePath = _configProvider.GetFtpRemotePath();
-            var regExpression = _configProvider.GetFtpRegExpression();
-            return _ftpClient.GetAllFtpFiles(remotePath, regExpression).OrderBy(x => x).ToList();
+            var remotePath = _configProvider.GetDirectoryPathToWatch();
+            var regExpression = _configProvider.GetRegExpression();
+            //return _ftpClient.GetAllFtpFiles(remotePath, regExpression).OrderBy(x => x).ToList();
         }
+         */
 
         private void prepareContextData(IJobExecutionContext context)
         {
@@ -140,10 +134,12 @@ namespace ENEXWinService.Quartz
                 throw new ArgumentException("Cant get IConfigurationProvider from context");
             _configProvider = confProvider;
 
+            /*
             var ftpClient = context.Trigger.JobDataMap.Get("FtpClient") as IFtpClient;
             if (ftpClient == null)
                 throw new ArgumentException("Cant get IFtpClient from context");
             _ftpClient = ftpClient;
+            */
 
             var service = context.Trigger.JobDataMap.Get("MeasureService") as IMeasureService;
             if (service == null)
@@ -178,7 +174,7 @@ namespace ENEXWinService.Quartz
             foreach (var filePath in filePaths)
             {
                 _logger.Debug(Path.GetFileName(filePath));
-                string checkPlant = _fileExtracter.getPlantName(Path.GetFileName(filePath));
+                string checkPlant = _configProvider.GetPlantName();
                 // jvr: skip file when name of the plant is not recognized
                 if (checkPlant == "unknown")
                 {
@@ -202,9 +198,75 @@ namespace ENEXWinService.Quartz
 
         private void processFile(string filePath, ApiPlant plant)
         {
-            var measures = getAllMeasuresFromFile(filePath, plant);
+
+            string conStr = "";
+
+            //Initialize 
+            conStr = _configProvider.GetConnnectionString();
+
+            OleDbConnection conn = new OleDbConnection(conStr +
+                "Data Source=" + filePath + ";" +
+                "Extended Properties=Excel 8.0");
+            conn.Open();
+            OleDbCommand cmd = new OleDbCommand();
+            cmd.Connection = conn;
+
+            DataSet ds = new DataSet();
+            DataTable dt = new DataTable();
+
+            if (dt != null)
+            {
+                String[] excelSheets = new String[dt.Rows.Count];
+                int i = 0;
+                string ExcelSheet = "";
+
+                // Add the sheet name to the string array.
+                foreach (DataRow row in dt.Rows)
+                {
+                    excelSheets[i] = row["TABLE_NAME"].ToString();
+                    if (excelSheets[i].Length < 13)
+                    {
+                        if (_fileExtracter.FindSheet(excelSheets[i]))
+                        {
+                            ExcelSheet = excelSheets[i];
+                        }
+                    }
+                }
+
+                if (ExcelSheet != "")
+                {
+
+                    cmd.CommandText = "SELECT * FROM [" + ExcelSheet + "]";
+                    dt.TableName = ExcelSheet;
+
+                    OleDbDataAdapter da = new OleDbDataAdapter(cmd);
+                    da.Fill(dt);
+                    ds.Tables.Add(dt);
+                    List<List<string>> data = new List<List<string>>();
+
+                    foreach (DataRow row in dt.Rows)
+                    {
+                        //if (row == null) continue;
+                        List<string> gettedData = new List<string>();
+                        i = 0;
+                        foreach (var columnitem in row.ItemArray) // Loop over the items.
+                        {
+                            //Console.Write("Item: "); // Print label.
+                            //Console.WriteLine(item); // Invokes ToString abstract method.
+                            if (i == 0 && columnitem.ToString() == "") ;
+                            else gettedData.Add(columnitem.ToString()); //add data
+
+                            i++;
+                        }
+                        data.Add(gettedData);
+                    }
+                }
+            }
+
+            // jvr var measures = getAllMeasuresFromFile(filePath, plant);
+
             //var plantPower=updatePlantPowerFromFile(filePath, plant);
-            if (measures == null || !measures.Any())
+            /*if (measures == null || !measures.Any())
             {
                 _logger.Warn("No measures found inside the file");
                 // jvr we check as processed even when no data is found
@@ -214,7 +276,11 @@ namespace ENEXWinService.Quartz
                 return;
             }
             _logger.InfoFormat("Found {0} measures to send", measures.Count);
-            sendMeasures(filePath, measures);
+             */
+
+            // jvr sendMeasures(filePath, measures);
+
+
             /*if (plantPower == null || !plantPower.Any())
             {
                 _logger.Warn("No change Power found inside the file");
@@ -224,57 +290,10 @@ namespace ENEXWinService.Quartz
 
         }
 
-        private IList<PlantPower> updatePlantPowerFromFile(string filePath, ApiPlant plant)
-        {
-            var fileLines = _ftpClient.ReadLinesFromFtpFile(filePath);
-            if (fileLines == null || !fileLines.Any())
-                return new List<PlantPower>();
-
-            var fileName = filePath.Split('/').Last();
-            var result = new List<PlantPower>();
-            var contLine = 0;
-            foreach (var line in fileLines)
-            {
-                if (contLine != 0)//cabecera
-                {
-                    var plantPowerFile = _filePlantPowerExtracter.ProcessLine(line, fileName, plant);
-                    var updatENEXlantPower = updatePlantPower(_plantPowerService, plantPowerFile, filePath);
-                    if (updatENEXlantPower != null)
-                    {
-                        _logger.DebugFormat("Updating PlantPower Date: {0} Power:{1} from file {2}", updatENEXlantPower.UtcUpdatedDateTime, updatENEXlantPower.Power, filePath);
-                        result.Add(updatENEXlantPower);
-                    }
-                }
-                contLine++;
-            }
-            return result;
-
-
-
-        }
-
-        private PlantPower updatePlantPower(IPlantPowerService _plantPowerService, PlantPower plantPowerFile, string filePath)
-        {
-            var plantPowerList = _plantPowerService.GetPlantPower(_configProvider.GetHourlyPlantsString()).OrderByDescending(x => x.UtcUpdatedDateTime);
-            var currentPlantPower = plantPowerList.FirstOrDefault(x => Double.Parse(x.UtcUpdatedDateTime) < Double.Parse(plantPowerFile.UtcUpdatedDateTime));
-            if (plantPowerFile.Power != currentPlantPower.Power)
-            {
-                _logger.InfoFormat("Updating PlantPower from File, Old PlantPower:{0}kW,Update:{1},Insert:{2}-> New PlantPower:{3}kW,Update:{4},Insert:{5}",
-               currentPlantPower.Power, currentPlantPower.UtcUpdatedDateTime, currentPlantPower.UtcInsertionDateTime,
-               plantPowerFile.Power, plantPowerFile.UtcUpdatedDateTime, plantPowerFile.UtcInsertionDateTime);
-                sendPlantPower(plantPowerFile, filePath);
-                return plantPowerFile;
-            }
-            else
-            {
-                return null;
-            }
-
-
-        }
-
+        /*
         private IList<Measure> getAllMeasuresFromFile(string filePath, ApiPlant plant)
         {
+            
             var fileLines = _ftpClient.ReadLinesFromFtpFile(filePath);
             if (fileLines == null || !fileLines.Any())
                 return new List<Measure>();
@@ -287,15 +306,17 @@ namespace ENEXWinService.Quartz
                 if (contLine != 0)//cabecera
                 {
                     _logger.Debug(line);
-                    var measure = _fileExtracter.ProcessLine(line, Path.GetFileName(fileName), plant);
+             //       var measure = _fileExtracter.ProcessLine(line, Path.GetFileName(fileName), plant);
                     if (measure != null)
                         result.Add(measure);
                 }
                 contLine++;
             }
             return result;
+              
         }
-
+         */ 
+       
         private void sendMeasures(string filePath, IList<Measure> measures)
         {
             trySendMeasures(filePath, measures);
@@ -356,13 +377,29 @@ namespace ENEXWinService.Quartz
             return true;
         }
 
-        private void moveProcessedFile(string filePath)
+        private void moveProcessedFile(string fullPathToFile)
         {
-            _logger.Info("Moving file to new location");
-            var processedFilesFtpFolder = _configProvider.GetFtpProcessedFilesPath();
-            var processedFileTextToAppend = _configProvider.GetFtpProcessedFileTextToAppend();
-            _ftpClient.MoveFtpProcessedFile(filePath, processedFilesFtpFolder, processedFileTextToAppend);
-            _logger.Info("DONE moving file to new location");
+            var name = Path.GetFileName(fullPathToFile);
+            try
+            {
+                var movedFile = string.Format("{0}{1}", _configProvider.GetProcessedFilesPath(), string.Format("{0}{1}", name, _configProvider.GetProcessedFileTextToAppend()));
+                _logger.Debug(string.Format("Moving file to {0}", movedFile));
+                var version = 0;
+                while (File.Exists(movedFile))
+                {
+                    _logger.Warn(string.Format("The file {0} exists. Creating new version", movedFile));
+                    version++;
+                    movedFile = string.Format("{0}{1}", _configProvider.GetProcessedFilesPath(),
+                        string.Format("{0}{1}.{2}", name, _configProvider.GetProcessedFileTextToAppend(), version));
+                }
+                File.Move(fullPathToFile, movedFile);
+            }
+            catch (Exception ex)
+            {
+                String error = String.Format("Error trying to move file '{0}' to directory '{1}' Exception: {2}", name,
+                     _configProvider.GetProcessedFilesPath(), ex.Message);
+                _logger.Error(error);
+            }
         }
 
 

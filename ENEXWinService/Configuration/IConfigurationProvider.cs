@@ -9,13 +9,16 @@ namespace ENEXWinService.Configuration
     {
         void Refresh();
         string GetMeasuresLoaderCronExpression();
-        string GetFtpAddress();
-        string GetFtpRemotePath();
-        string GetFtpRegExpression();
-        string GetFtpUsername();
-        string GetFtpPassword();
-        string GetFtpProcessedFilesPath();
-        string GetFtpProcessedFileTextToAppend();
+        string GetDirectoryPathToWatch();
+        string GetConnnectionString();
+        string GetFilenamePattern();
+        string GetRegExpression();
+        //string GetFtpUsername();
+        //string GetFtpPassword();
+        string GetProcessedFilesPath();
+        string GetPlantName();
+        string GetProcessedFileTextToAppend();
+        //string GetFtpProcessedFileTextToAppend();
         string GetWebApiPlantBaseUri();
         string GetWebApiMeasurePutUri();
         string GetWebApiPlantPowerUri();

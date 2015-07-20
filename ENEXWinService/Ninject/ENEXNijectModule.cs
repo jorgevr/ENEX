@@ -24,8 +24,8 @@ namespace ENEXWinService.Ninject
             Bind<IMeasureFileExtracter>().To<MeasureFileExtracter>();
             Bind<IPlantPowerFileExtracter>().To<PlantPowerFileExtracter>();
             Bind<IPlantPowerService>().To<PlantPowerService>();
-            Bind<IFtpInfo>().To<FtpInfo>();
-            Bind<IFtpClient>().To<Sftp>();
+            //Bind<IFtpInfo>().To<FtpInfo>();
+            //Bind<IFtpClient>().To<Sftp>();
             Bind<IWebApiInfo>().To<WebApiInfo>();
             Bind<IWebApiClient>().To<WebApiClient>();
         }

@@ -13,23 +13,25 @@ namespace ENEXWinService.Quartz
 
         private static IConfigurationProvider _configProvider;
         private static IMeasureService _service;
-        private static IFtpClient _ftpClient;
+       // private static IFtpClient _ftpClient;
         private static IMeasureFileExtracter _measureFileExtracter;
         private static IPlantPowerFileExtracter _plantPowerFileExtracter;
         private static IPlantPowerService _plantPowerService;
         private static IPlantService _plantService;
 
-        public MeasuresJobHelper(IConfigurationProvider configProvider, IMeasureService service, IFtpClient ftpClient, IMeasureFileExtracter measureFileExtracter, IPlantPowerService plantPowerService, IPlantPowerFileExtracter plantPowerFileExtracter, IPlantService plantService)
+        
+        public MeasuresJobHelper(IConfigurationProvider configProvider, IMeasureService service, IMeasureFileExtracter measureFileExtracter, IPlantPowerService plantPowerService, IPlantPowerFileExtracter plantPowerFileExtracter, IPlantService plantService)
         {
             _configProvider = configProvider;
             _service = service;
-            _ftpClient = ftpClient;
+            //_ftpClient = ftpClient;
             _measureFileExtracter = measureFileExtracter;
             _plantPowerService = plantPowerService;
             _plantPowerFileExtracter = plantPowerFileExtracter;
             _plantService = plantService;
         }
 
+         
         public ENEXJob GetJob()
         {
             var result = new ENEXJob();
@@ -58,7 +60,7 @@ namespace ENEXWinService.Quartz
             JobDataMap result = new JobDataMap();
             result.Put("MeasureService", _service);
             result.Put("ConfigurationProvider", _configProvider);
-            result.Put("FtpClient", _ftpClient);
+            // result.Put("FtpClient", _ftpClient);
             result.Put("MeasureFileExtracter", _measureFileExtracter);
             result.Put("PlantPowerService", _plantPowerService);
             result.Put("PlantPowerFileExtracter", _plantPowerFileExtracter);

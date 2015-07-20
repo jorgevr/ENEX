@@ -18,7 +18,17 @@ namespace ENEXWinService.Configuration
             return ConfigurationManager.AppSettings["CronExpression"];
         }
 
-        public string GetFtpAddress()
+        public string GetDirectoryPathToWatch()
+        {
+            return ConfigurationManager.AppSettings["DirectoryPathToWatch"];
+        }
+
+        public string GetFilenamePattern()
+        {
+            return ConfigurationManager.AppSettings["FilenamePattern"];
+        }
+
+        /*public string GetFtpAddress()
         {
             return ConfigurationManager.AppSettings["FtpAddress"];
         }
@@ -26,31 +36,31 @@ namespace ENEXWinService.Configuration
         public string GetFtpRemotePath()
         {
             return ConfigurationManager.AppSettings["FtpRemotePath"];
+        }*/
+
+        public string GetProcessedFilesPath()
+        {
+            return ConfigurationManager.AppSettings["DirectoryToMoveProcessedFiles"];
         }
 
-        public string GetFtpRegExpression()
+        public string GetProcessedFileTextToAppend()
         {
-            return ConfigurationManager.AppSettings["FtpFilenamePattern"];
+            return ConfigurationManager.AppSettings["ProcessedFileTextToAppend"];
         }
 
-        public string GetFtpUsername()
+        public string GetPlantName()
         {
-            return ConfigurationManager.AppSettings["FtpUsername"];
+            return ConfigurationManager.AppSettings["PlantsString"];
         }
 
-        public string GetFtpPassword()
+        public string GetRegExpression()
         {
-            return ConfigurationManager.AppSettings["FtpPassword"];
+            return ConfigurationManager.AppSettings["FilenamePattern"];
         }
 
-        public string GetFtpProcessedFilesPath()
+        public string GetConnnectionString()
         {
-            return ConfigurationManager.AppSettings["FtpProcessedFilesPath"];
-        }
-
-        public string GetFtpProcessedFileTextToAppend()
-        {
-            return ConfigurationManager.AppSettings["FtpProcessedFileTextToAppend"];
+            return ConfigurationManager.ConnectionStrings["Excel03ConString"].ConnectionString;
         }
 
         public string GetWebApiPlantBaseUri()
@@ -115,6 +125,7 @@ namespace ENEXWinService.Configuration
         {
             return int.Parse(ConfigurationManager.AppSettings["NumberOfHoursToProcess"]);            
         }
+
         public string GetProcessMeasuresFilesListPath()
         {
             return ConfigurationManager.AppSettings["ProcessMeasuresFilesPath"];

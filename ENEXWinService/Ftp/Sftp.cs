@@ -10,7 +10,7 @@ using log4net;
 
 namespace ENEXWinService.Ftp
 {
-
+    /*
     public class Sftp : IFtpClient
     {
         private static readonly ILog _logger = LogManager.GetLogger(typeof(Sftp));
@@ -85,4 +85,5 @@ namespace ENEXWinService.Ftp
         }
 
     }
+     */ 
 }

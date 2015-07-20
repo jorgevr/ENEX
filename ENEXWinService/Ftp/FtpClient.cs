@@ -9,6 +9,7 @@ using log4net;
 
 namespace ENEXWinService.Ftp
 {
+    /*
     public interface IFtpClient
     {
         IList<string> GetAllFtpFiles(string remotePath, string regExpression);
@@ -105,4 +106,5 @@ namespace ENEXWinService.Ftp
             return fileList;
         }
     }
+     */
 }
