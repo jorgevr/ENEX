@@ -10,10 +10,12 @@ using Quartz;
 using Moq;
 using Quartz.Impl;
 using System.Text.RegularExpressions;
-using System.Data.OleDb;
 using System.Data;
 using System.Windows.Forms;
 using System.Globalization;
+using NPOI.HSSF.UserModel;
+using System.IO;
+using NPOI.SS.UserModel;
 
 
 namespace ENEXWinService.Tests.FileExtracterTests
@@ -27,20 +29,12 @@ namespace ENEXWinService.Tests.FileExtracterTests
         public void FindMonth()
         {
 
-            // initialize
-            OleDbConnection conn;
-            //OleDbDataAdapter adapter;
-            DataTable dt = null;
+            string filenamePath = @"TestData\Production NALBANT Jan-Jul16 2015.xls";
+            FileStream _fileStream = new FileStream(filenamePath, FileMode.Open,
+                                      FileAccess.Read);
 
-            var file = @"TestData\Production NALBANT Jan-Jul16 2015.xls";
-
-            conn = new OleDbConnection("Provider=Microsoft.Jet.OleDb.4.0;" +
-                "Data Source=" + file + ";" +
-                "Extended Properties=Excel 8.0");
-            conn.Open();
-
-            // Get the data table containg the schema guid.
-            dt = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+            IWorkbook _workbook = WorkbookFactory.Create(_fileStream);
+            _fileStream.Close();
 
             // End initialize
 
@@ -53,27 +47,17 @@ namespace ENEXWinService.Tests.FileExtracterTests
 
             string getMonth = "";
 
-            if (dt != null)
+            foreach (ISheet sheet in _workbook)
             {
-                String[] excelSheets = new String[dt.Rows.Count];
-                int i = 0;
-
-                // Add the sheet name to the string array.
-                foreach (DataRow row in dt.Rows)
-                {
-                    excelSheets[i] = row["TABLE_NAME"].ToString();
-                    if (excelSheets[i].Length < 13)
-                    {
-                        if (excelSheets[i].Substring(1,3) == currentMonth)
-                        {
-                            getMonth = excelSheets[i];
-                        }
-                    }
-                    i++;
+                    
+                if (sheet.SheetName.Substring(0, 3) == currentMonth)
+                { 
+                    getMonth = sheet.SheetName;
                 }
-            }            
+                
+            }
 
-            Assert.AreEqual(getMonth, "'Iul 2015$'");
+            Assert.AreEqual(getMonth, "Iul 2015");
             
         }
 
@@ -82,54 +66,32 @@ namespace ENEXWinService.Tests.FileExtracterTests
         public void FindYear()
         {
 
-            // initialize
-            OleDbConnection conn;
-            //OleDbDataAdapter adapter;
-            DataTable dt = null;
+            string filenamePath = @"TestData\Production NALBANT Jan-Jul16 2015.xls";
+            FileStream _fileStream = new FileStream(filenamePath, FileMode.Open,
+                                      FileAccess.Read);
 
-            var file = @"TestData\Production NALBANT Jan-Jul16 2015.xls";
-
-            conn = new OleDbConnection("Provider=Microsoft.Jet.OleDb.4.0;" +
-                "Data Source=" + file + ";" +
-                "Extended Properties=Excel 8.0");
-            conn.Open();
-
-            // Get the data table containg the schema guid.
-            dt = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+            IWorkbook _workbook = WorkbookFactory.Create(_fileStream);
+            _fileStream.Close();
 
             // End initialize
 
             DateTime now = DateTime.Now;
 
             CultureInfo ru = new CultureInfo("ro-RO");
-            int currentYear = now.Year;
-            int getYear = 0;
-
-            if (dt != null)
+            string currentYear = now.Year.ToString();
+            string getYear = " ";
+            
+            foreach (ISheet sheet in _workbook)
             {
-                String[] excelSheets = new String[dt.Rows.Count];
-                int i = 0;
-
-                // Add the sheet name to the string array.
-                foreach (DataRow row in dt.Rows)
+                string sheetYear = sheet.SheetName.Substring(4, 4);
+                if ( sheetYear == currentYear)
                 {
-                    excelSheets[i] = row["TABLE_NAME"].ToString();
-                    // if (excelSheets[i] == rumMonth) break;
-                    if (excelSheets[i].Length < 13)
-                    {
-                        string getDate = excelSheets[i].Substring(5,4);
-                        if (Convert.ToInt32(getDate) == currentYear)
-                        {
-                            getYear = Convert.ToInt32(excelSheets[i].Substring(5, 4));
-                        }
-                    }
-                    i++;
+                    getYear = sheetYear;
                 }
+                
             }
-
-
-            Assert.AreEqual(getYear, 2015);
-
+            
+            Assert.AreEqual(getYear, "2015");
         }
 
         [TestMethod]
@@ -137,79 +99,124 @@ namespace ENEXWinService.Tests.FileExtracterTests
         public void FindDateFirstLine()
         {
 
-            // initialize
-            OleDbConnection conn;
-            //OleDbDataAdapter adapter;
-            //DataTable dt = null;
-            DataSet ds = new DataSet();
-            
-            var file = @"TestData\Production NALBANT Jan-Jul16 2015.xls";
+            string filenamePath = @"TestData\Production NALBANT Jan-Jul16 2015.xls";
+            FileStream _fileStream = new FileStream(filenamePath, FileMode.Open,
+                                      FileAccess.Read);
 
-            conn = new OleDbConnection("Provider=Microsoft.Jet.OleDb.4.0;" +
-                "Data Source=" + file + ";" +
-                "Extended Properties=Excel 8.0");
-            conn.Open();
-            OleDbCommand cmd = new OleDbCommand();
-            cmd.Connection = conn;
+            IWorkbook _workbook = WorkbookFactory.Create(_fileStream);
+            _fileStream.Close();
 
-            // Get the data table containg the schema guid.
-            // dt = conn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+            //formulas of the Workbook are evaluated and an instance of a data formatter is created
+            IFormulaEvaluator formulaEvaluator = new HSSFFormulaEvaluator(_workbook);
+            DataFormatter dataFormatter = new HSSFDataFormatter(new CultureInfo("en-US"));
 
             // End initialize
-
-            string sheetName = "'Iul 2015$'";
-            cmd.CommandText = "SELECT * FROM [" + sheetName + "]";
-
-            DataTable dt = new DataTable();
-            dt.TableName = sheetName;
-
-            OleDbDataAdapter da = new OleDbDataAdapter(cmd);
-            da.Fill(dt);
-            ds.Tables.Add(dt);
-
-            List<List<string>> data = new List<List<string>>();
-            
-            foreach (DataRow row in dt.Rows)
+            string result = " ";
+            ISheet _worksheet = _workbook.GetSheet("Iul 2015");
+            IRow firstRow = _worksheet.GetRow(0);
+            int numrows = firstRow.LastCellNum;
+            DateTime now = DateTime.Now;
+            foreach (ICell cell in firstRow)
             {
-                //if (row == null) continue;
-                List<string> gettedData = new List<string>();
-                int i = 0;
-                foreach (var columnitem in row.ItemArray) // Loop over the items.
+
+                if(cell.StringCellValue != "")
                 {
-                    //Console.Write("Item: "); // Print label.
-                    //Console.WriteLine(item); // Invokes ToString abstract method.
-                    if (i == 0 && columnitem.ToString() == "")
+                    var Title = cell.StringCellValue;
+                    var Date = Title.Substring(Title.Length - 10, 10);
+                    DateTime dt = Convert.ToDateTime(Date);
+                    int currentYear = now.Year;
+                    int currentMonth = now.Month;
+                    if (dt.Year == currentYear)
                     {
+                        if (dt.Month == currentMonth)
+                        {
+                            result = Date;
+                            break;
+                        }
+
                     }
-                    else
-                    {
-                        gettedData.Add(columnitem.ToString()); //add data
-                    }
-                    i++;
                 }
-                data.Add(gettedData);
             }
 
-            int nRows = data.Count;
-            int nCols = data[0].Count;
+            Assert.AreEqual(result, "31.07.2015");
             
-
-            foreach(List<string> b in data)
-            {
-                foreach(string c in b)    
-                {
-                    if (c)
-                    string cell = c;
-                }
-
-            }
-
-         //   Assert.AreEqual(getYear, 2015);
-
         }
 
-    
-    }
+        [TestMethod]
+        [DeploymentItem(@"../../TestData/Production NALBANT Jan-Jul16 2015.xls", "TestData")]
+        public void iterateData()
+        {
 
+            string filenamePath = @"TestData\Production NALBANT Jan-Jul16 2015.xls";
+            FileStream _fileStream = new FileStream(filenamePath, FileMode.Open,
+                                      FileAccess.Read);
+
+            IWorkbook _workbook = WorkbookFactory.Create(_fileStream);
+            _fileStream.Close();
+
+            //formulas of the Workbook are evaluated and an instance of a data formatter is created
+            IFormulaEvaluator formulaEvaluator = new HSSFFormulaEvaluator(_workbook);
+            DataFormatter dataFormatter = new HSSFDataFormatter(new CultureInfo("en-US"));
+
+            // End initialize
+            ISheet _worksheet = _workbook.GetSheet("Iul 2015");
+            int FirstRow = 0;
+            int LastDay = 0;
+            foreach (IRow row in _worksheet)
+            {
+                 //Index to find sheet header (first row)
+                if (row.GetCell(0) != null && row.GetCell(1).NumericCellValue == 1) 
+                {
+                    FirstRow = row.RowNum;
+                    int c = 1; 
+                     
+                    //Index to find last column (day) with value
+                    while (row.GetCell(c).NumericCellValue <= 31)
+                    {
+                        LastDay = row.GetCell(c).ColumnIndex;
+                        if(_worksheet.GetRow(FirstRow + 24).GetCell(c).NumericCellValue == 0)
+                        {
+                            break;
+                        }
+                        c++;
+                    }
+                    break;
+                }
+            }
+            
+            DataTable results = new DataTable();
+            results.Columns.Add("Date", typeof(DateTime));
+            results.Columns.Add("Value", typeof(double));
+            DateTime now = DateTime.Now;
+            DateTime ProdDate = new DateTime(now.Year, now.Month, 1);
+            DateTime InitialDate = new DateTime(now.Year, now.Month, 1);   
+            bool TheEnd = false;
+            double Data = 0;
+            //start iteration per day
+            for (int day = 1; day <= LastDay; day++)
+            {
+                for (int hour = 1; hour <= 24; hour++)
+                {
+                    if (_worksheet.GetRow(FirstRow + hour).GetCell(day) == null)
+                    {
+                        TheEnd = true;
+                        break;
+                    }
+                   // ProdDate = ProdDate(now.Year, now.Month, 1);
+                    ProdDate = InitialDate.Date.AddDays(day - 1).AddHours(hour);
+                    Data = _worksheet.GetRow(FirstRow + hour).GetCell(day).NumericCellValue;
+                    results.Rows.Add(ProdDate, Data);
+                }
+
+                if (TheEnd == true)
+                {
+                    break;
+                }
+                
+            }
+       
+                Assert.AreEqual(Data, 0.254);            
+        }
+    }
 
 }

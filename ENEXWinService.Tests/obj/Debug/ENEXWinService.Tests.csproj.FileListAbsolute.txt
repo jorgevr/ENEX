@@ -20,3 +20,11 @@ C:\Users\jorge.vazquez\Documents\gnarum\forecast\Modules\ENEXMeasuresLoader\ENEX
 C:\Users\jorge.vazquez\Documents\gnarum\forecast\Modules\ENEXMeasuresLoader\ENEXWinService.Tests\obj\Debug\ENEXWinService.Tests.csprojResolveAssemblyReference.cache
 C:\Users\jorge.vazquez\Documents\gnarum\forecast\Modules\ENEXMeasuresLoader\ENEXWinService.Tests\obj\Debug\EDPWinService.Tests.dll
 C:\Users\jorge.vazquez\Documents\gnarum\forecast\Modules\ENEXMeasuresLoader\ENEXWinService.Tests\obj\Debug\EDPWinService.Tests.pdb
+C:\Users\jorge.vazquez\Documents\gnarum\forecast\Modules\ENEXMeasuresLoader\ENEXWinService.Tests\bin\Debug\ICSharpCode.SharpZipLib.dll
+C:\Users\jorge.vazquez\Documents\gnarum\forecast\Modules\ENEXMeasuresLoader\ENEXWinService.Tests\bin\Debug\NPOI.dll
+C:\Users\jorge.vazquez\Documents\gnarum\forecast\Modules\ENEXMeasuresLoader\ENEXWinService.Tests\bin\Debug\NPOI.OOXML.dll
+C:\Users\jorge.vazquez\Documents\gnarum\forecast\Modules\ENEXMeasuresLoader\ENEXWinService.Tests\bin\Debug\NPOI.OpenXml4Net.dll
+C:\Users\jorge.vazquez\Documents\gnarum\forecast\Modules\ENEXMeasuresLoader\ENEXWinService.Tests\bin\Debug\NPOI.OpenXmlFormats.dll
+C:\Users\jorge.vazquez\Documents\gnarum\forecast\Modules\ENEXMeasuresLoader\ENEXWinService.Tests\bin\Debug\NPOI.xml
+C:\Users\jorge.vazquez\Documents\gnarum\forecast\Modules\ENEXMeasuresLoader\ENEXWinService.Tests\bin\Debug\NPOI.OOXML.xml
+C:\Users\jorge.vazquez\Documents\gnarum\forecast\Modules\ENEXMeasuresLoader\ENEXWinService.Tests\bin\Debug\NPOI.OpenXml4Net.xml
